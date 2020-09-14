@@ -1,0 +1,13 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    border-radius: 15px;
+    justify-items: center;
+}
+
+.grid .card {
+    width: 93%;
+    height: 178px;
+    margin: 10px;
+}
