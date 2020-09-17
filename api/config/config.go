@@ -2,32 +2,35 @@ package config
 
 import (
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
-// DBConfig Holds DB Configuration Info
+// DBConfig data
 type DBConfig struct {
 	URI      string
 	Username string
 	Password string
 }
 
-func init() {
-	godotenv.Load()
+// RedditConfig data
+type RedditConfig struct {
+	Username string
+	Password string
+	Client   string
+	Secret   string
 }
 
-// GetDBConfig will get the database config values from the envrionment. They will be loaded in the init func in config.go
-func GetDBConfig() *DBConfig {
-	return &DBConfig{
-		URI:      os.Getenv("DB_URI"),
-		Username: os.Getenv("DB_USERNAME"),
-		Password: os.Getenv("DB_PASSWORD"),
+// GetRedditConfig data from env
+func GetRedditConfig() *RedditConfig {
+	return &RedditConfig{
+		Username: os.Getenv("REDDIT_USERNAME"),
+		Password: os.Getenv("REDDIT_PASSWORD"),
+		Client:   os.Getenv("TEST_APP_CLIENT"),
+		Secret:   os.Getenv("TEST_APP_SECRET"),
 	}
 }
 
-// GetTestDBConfig will return a test database's config values if they are set and you want to create a test database
-func GetTestDBConfig() *DBConfig {
+// GetDBConfig data from env
+func GetDBConfig() *DBConfig {
 	return &DBConfig{
 		URI:      os.Getenv("DB_TEST_URI"),
 		Username: os.Getenv("DB_TEST_USERNAME"),
