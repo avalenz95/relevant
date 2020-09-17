@@ -7,7 +7,7 @@ type Handler struct {
 	db *mongo.Database
 }
 
-// New will create a new handler with the given databse and other dependencies that your routes may need
+// NewHandler with given databse and other dependencies
 func NewHandler(db *mongo.Database) *Handler {
 	return &Handler{
 		db,
