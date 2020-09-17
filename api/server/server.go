@@ -1,8 +1,8 @@
 package server
 
 import (
+	"github.com/ablades/relevant/db"
 	"github.com/labstack/echo/v4"
-	"github.com/tempor1s/echo-boiler/db"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
