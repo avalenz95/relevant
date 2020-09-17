@@ -32,17 +32,3 @@ func Connect() *mongo.Database {
 
 	return client.Database("testdb")
 }
-
-// ActiveCollections current collections a
-func ActiveCollections(db *mongo.Database) {
-
-	// use a filter to only select capped collections
-	result, err := db.ListCollectionNames(context.TODO(), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, coll := range result {
-		fmt.Println(coll)
-	}
-}

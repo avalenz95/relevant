@@ -1,8 +1,9 @@
 package server
 
 import (
+	"net/http"
+
 	"github.com/ablades/relevant/handlers"
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
@@ -12,7 +13,7 @@ func (s *Server) SetRoutes() {
 	// s.e.Use(middleware.Recover())
 	s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
-		AllowMethods: []string{echo.GET, echo.POST, echo.DELETE, echo.PATCH},
+		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch},
 	}))
 
 	route := handlers.NewHandler(s.db)
