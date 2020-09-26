@@ -2,7 +2,14 @@ package config
 
 import (
 	"os"
+
+	"github.com/joho/godotenv"
 )
+
+// Init Env Variables
+func init() {
+	godotenv.Load()
+}
 
 // DBConfig data
 type DBConfig struct {

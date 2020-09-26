@@ -18,7 +18,9 @@ func Connect() *mongo.Database {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 	defer cancel()
-
+	fmt.Println("here")
+	fmt.Println(dbConfig.Username)
+	fmt.Println(dbConfig.URI)
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(dbConfig.URI))
 	if err != nil {
 		log.Fatal(err)
