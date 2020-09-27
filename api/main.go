@@ -2,13 +2,23 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/ablades/relevant/server"
+	"github.com/spf13/viper"
 )
 
 func main() {
-	fmt.Println(os.Getenv("DB_TEST_USERNAME"))
+
+	// Set the file name of the configurations file
+	viper.SetConfigName("config")
+	viper.SetConfigType("yml")
+	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("Error reading config file, %s", err))
+	}
+
 	// Start Server
 	server := server.NewServer(nil)
 
