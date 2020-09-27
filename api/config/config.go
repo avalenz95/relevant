@@ -1,46 +1,21 @@
 package config
 
 import (
-	"os"
+	"fmt"
 
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
-// Init Env Variables
-func init() {
-	godotenv.Load()
-}
+//Init Config Variables
+func Init() {
+	// Set the file name of the configurations file
+	viper.SetConfigName("config")
+	viper.SetConfigType("yml")
+	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
 
-// DBConfig data
-type DBConfig struct {
-	URI      string
-	Username string
-	Password string
-}
-
-// RedditConfig data
-type RedditConfig struct {
-	Username string
-	Password string
-	Client   string
-	Secret   string
-}
-
-// GetRedditConfig data from env
-func GetRedditConfig() *RedditConfig {
-	return &RedditConfig{
-		Username: os.Getenv("REDDIT_USERNAME"),
-		Password: os.Getenv("REDDIT_PASSWORD"),
-		Client:   os.Getenv("TEST_APP_CLIENT"),
-		Secret:   os.Getenv("TEST_APP_SECRET"),
+	if err := viper.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("Error reading config file, %s", err))
 	}
-}
-
-// GetDBConfig data from env
-func GetDBConfig() *DBConfig {
-	return &DBConfig{
-		URI:      os.Getenv("DB_TEST_URI"),
-		Username: os.Getenv("DB_TEST_USERNAME"),
-		Password: os.Getenv("DB_TEST_PASSWORD"),
-	}
+	fmt.Println(viper.GetString("reddit.secret"))
 }

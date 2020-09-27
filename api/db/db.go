@@ -6,22 +6,20 @@ import (
 	"log"
 	"time"
 
-	"github.com/ablades/relevant/api/config"
+	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Connect to a given database
 func Connect() *mongo.Database {
-	dbConfig := config.GetDBConfig()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
 	defer cancel()
 	fmt.Println("here")
-	fmt.Println(dbConfig.Username)
-	fmt.Println(dbConfig.URI)
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(dbConfig.URI))
+	fmt.Println(viper.GetString("reddit.username"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(viper.GetString("db.testuri")))
 	if err != nil {
 		log.Fatal(err)
 	}
