@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 
@@ -24,7 +25,9 @@ func (h *Handler) RedditAuth(c echo.Context) (err error) {
 	q.Add("duration", "temporary")
 	q.Add("scope", "mysubreddits identity history")
 
-	url.Query().Encode()
+	url.RawQuery = q.Encode()
 	// TODO: LOG redirect
+	fmt.Printf("Redirecting to: %s \n", url.String())
+
 	return c.Redirect(http.StatusTemporaryRedirect, url.String())
 }

@@ -18,4 +18,5 @@ func (s *Server) SetRoutes() {
 	route := handlers.NewHandler(s.db)
 
 	s.e.GET("/auth", route.RedditAuth)
+	s.e.GET("/authcallback", route.AuthCallback)
 }
