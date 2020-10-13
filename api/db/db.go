@@ -3,32 +3,47 @@ package db
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/spf13/viper"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 // Connect to a given database
 func Connect() *mongo.Database {
-
+	// Build URI
+	uri := fmt.Sprintf("mongodb+srv://%s:%s@cluster0.pwh5o.mongodb.net/%s?retryWrites=true&w=majority",
+		viper.Get("db.user"),
+		viper.Get("db.password"),
+		viper.Get("db.name"),
+	)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-
 	defer cancel()
-	fmt.Println("here")
-	fmt.Println(viper.GetString("reddit.username"))
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(viper.GetString("db.testuri")))
+
+	// Close on failed connection
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
-	// Print Active Collections
-	collections, _ := client.Database("testdb").ListCollectionNames(ctx, nil)
-	for _, coll := range collections {
-		fmt.Printf("Connected to Collection: %s", coll)
-	}
+	// Close on disconnect
+	defer func() {
+		if err = client.Disconnect(ctx); err != nil {
+			panic(err)
+		}
+	}()
 
-	return client.Database("testdb")
+	// Ping the primary
+	if err := client.Ping(ctx, readpref.Primary()); err != nil {
+		panic(err)
+	}
+	// TODO: Send to logs
+	fmt.Println("Successfully connected and pinged.")
+	fmt.Println(client.ListDatabaseNames(ctx, bson.D{}))
+	fmt.Println(client.Database(viper.GetString("db.name")).ListCollectionNames(ctx, bson.D{}))
+
+	return client.Database(viper.GetString("db.name"))
 }
