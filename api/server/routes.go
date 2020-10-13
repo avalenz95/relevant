@@ -10,7 +10,6 @@ import (
 // SetRoutes will setup all the routes and
 func (s *Server) SetRoutes() {
 	s.e.Use(middleware.Logger())
-	// s.e.Use(middleware.Recover())
 	s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch},
@@ -18,6 +17,5 @@ func (s *Server) SetRoutes() {
 
 	route := handlers.NewHandler(s.db)
 
-	s.e.GET("/", route.RedditAuth)
-	// Setup all your routes here!
+	s.e.GET("/auth", route.RedditAuth)
 }
