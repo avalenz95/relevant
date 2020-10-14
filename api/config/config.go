@@ -31,5 +31,4 @@ func init() {
 	if err := viper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("Error reading config file, %s", err))
 	}
-	fmt.Println(viper.GetString("reddit.secret"))
 }
