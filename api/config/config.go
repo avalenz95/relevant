@@ -14,7 +14,7 @@ func GetAuthConfig() *oauth2.Config {
 		ClientSecret: viper.GetString("reddit.secret"),
 		Scopes:       []string{"mysubreddits", "identity", "history"},
 		Endpoint: oauth2.Endpoint{
-			TokenURL: "https://oauth.reddit.com/api/v1/me",
+			TokenURL: "https://www.reddit.com/api/v1/access_token",
 			AuthURL:  "https://reddit.com/api/v1/authorize",
 		},
 		RedirectURL: viper.GetString("reddit.redirect"),

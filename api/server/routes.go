@@ -15,8 +15,9 @@ func (s *Server) SetRoutes() {
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch},
 	}))
 
-	route := handlers.NewHandler(s.db)
-
-	s.e.GET("/auth", route.RedditAuth)
-	s.e.GET("/authcallback", route.AuthCallback)
+	handle := handlers.NewHandler(s.db)
+	//client :=
+	// Authentication Routes
+	s.e.GET("/auth", handle.AuthReddit)
+	s.e.GET("/authcallback", handle.AuthCallback)
 }
