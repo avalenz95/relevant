@@ -3,31 +3,24 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 
+	"github.com/ablades/relevant/config"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 )
 
 // RedditAuth route
 func (h *Handler) RedditAuth(c echo.Context) (err error) {
-	//Build Auth URL
-	url := url.URL{
-		Scheme: "https",
-		Path:   "reddit.com/api/v1/authorize",
-	}
-	//TODO: ADD state redirect_uri and response_type and state
-	q := url.Query()
-	q.Add("client_id", viper.GetString("reddit.client"))
-	q.Add("response_type", "")
-	q.Add("state", "")
-	q.Add("redirect_uri", "")
-	q.Add("duration", "temporary")
-	q.Add("scope", "mysubreddits identity history")
 
-	url.RawQuery = q.Encode()
-	// TODO: LOG redirect
-	fmt.Printf("Redirecting to: %s \n", url.String())
+	authConfig := config.GetAuthConfig()
+	fmt.Print(authConfig)
 
-	return c.Redirect(http.StatusTemporaryRedirect, url.String())
+	// Set state and additional params
+	url := authConfig.AuthCodeURL(uuid.New().String(),
+		oauth2.SetAuthURLParam("response_type", "code"),
+		oauth2.SetAuthURLParam("duration", "temporary"),
+	)
+
+	return c.Redirect(http.StatusTemporaryRedirect, url)
 }

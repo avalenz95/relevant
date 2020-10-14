@@ -4,10 +4,24 @@ import (
 	"fmt"
 
 	"github.com/spf13/viper"
+	"golang.org/x/oauth2"
 )
 
-//Init Config Variables
-func Init() {
+// GetAuthConfig for app
+func GetAuthConfig() *oauth2.Config {
+	return &oauth2.Config{
+		ClientID:     viper.GetString("reddit.client"),
+		ClientSecret: viper.GetString("reddit.secret"),
+		Scopes:       []string{"mysubreddits", "identity", "history"},
+		Endpoint: oauth2.Endpoint{
+			TokenURL: "https://oauth.reddit.com/api/v1/me",
+			AuthURL:  "https://reddit.com/api/v1/authorize",
+		},
+		RedirectURL: viper.GetString("reddit.redirect"),
+	}
+}
+
+func init() {
 	// Set the file name of the configurations file
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")

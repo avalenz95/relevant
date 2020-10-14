@@ -15,9 +15,10 @@ import (
 // Connect to a given database
 func Connect() *mongo.Database {
 	// Build URI
-	uri := fmt.Sprintf("mongodb+srv://%s:%s@cluster0.pwh5o.mongodb.net/%s?retryWrites=true&w=majority",
+	uri := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority",
 		viper.Get("db.user"),
 		viper.Get("db.password"),
+		viper.Get("db.cluster"),
 		viper.Get("db.name"),
 	)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
