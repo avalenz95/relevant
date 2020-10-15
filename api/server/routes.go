@@ -20,4 +20,5 @@ func (s *Server) SetRoutes() {
 	// Authentication Routes
 	s.e.GET("/auth", handle.AuthReddit)
 	s.e.GET("/authcallback", handle.AuthCallback)
+	s.e.GET("users/:name", handle.UserHome)
 }

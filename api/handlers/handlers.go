@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/ablades/relevant/config"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -37,6 +39,21 @@ func (h *Handler) RoundTrip(req *http.Request) (*http.Response, error) {
 	return http.DefaultTransport.RoundTrip(req)
 }
 
+func (h *Handler) verifySession(c echo.Context) error {
+	cookie, err := c.Cookie("_csrf")
+	if err != nil {
+		log.Error(err)
+	}
+
+	// Verify csrfs match
+	if cookie.Value != c.Get(middleware.DefaultCSRFConfig.ContextKey) {
+		return c.String(http.StatusForbidden, "You do not have access to this page")
+	}
+
+	return c.String(http.StatusOK, "Valid")
+}
+
+//Send Requests to Reddit api
 func (h *Handler) request(method string, url string) []byte {
 
 	// Build Request
@@ -44,15 +61,16 @@ func (h *Handler) request(method string, url string) []byte {
 	if err != nil {
 		log.Error(err)
 	}
-	// Set Header
 	req.Header.Set("User-Agent", viper.GetString("reddit.agent"))
 
+	// Send Request
 	res, err := h.client.Do(req)
 	if err != nil {
 		log.Error(err)
 	}
 	defer res.Body.Close()
 
+	// Read response
 	content, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Error(err)
