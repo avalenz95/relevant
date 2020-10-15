@@ -6,10 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ablades/relevant/config"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
@@ -25,35 +23,30 @@ func (h *Handler) AuthCallback(c echo.Context) (err error) {
 		return c.String(http.StatusForbidden, "csrf detected")
 	}
 
-	authConfig := config.GetAuthConfig()
-	// token, err := authConfig.Exchange(ctx, code)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// Custom http client
+	// Custom http client for exchange call
 	client := &http.Client{
 		Transport: &oauth2.Transport{
 			// configure token
-			Source: authConfig.TokenSource(oauth2.NoContext, &oauth2.Token{
+			Source: h.config.TokenSource(oauth2.NoContext, &oauth2.Token{
 				AccessToken: code,
 			}),
-			Base: &transp{
-				config:    authConfig,
-				userAgent: fmt.Sprintf("relevant_for_reddit/0.0 (by /u/%s)", viper.GetString("reddit.username")),
-			},
+			Base: h,
 		},
 	}
 
 	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, client)
 
-	token, err := authConfig.Exchange(ctx, code)
+	// Get token from auth code
+	token, err := h.config.Exchange(ctx, code)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Print(token)
-	// fesp, err := h.client.Get("https://oauth.reddit.com/api/v1/me.json")
-	// content, err := ioutil.ReadAll(resp.Body)
-	return c.String(http.StatusOK, "hi")
+	// Set client for token auto refresh
+	h.client = h.config.Client(context.Background(), token)
+	fmt.Println("Client is set! Reddit API Requests can be made!")
+
+	content := h.request(http.MethodGet, "https://oauth.reddit.com/api/v1/me")
+
+	return c.String(http.StatusOK, string(content))
 }

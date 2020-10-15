@@ -1,38 +1,62 @@
 package handlers
 
 import (
+	"io/ioutil"
 	"net/http"
 
+	"github.com/ablades/relevant/config"
+	"github.com/labstack/gommon/log"
+	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/oauth2"
 )
 
-// Handler is used so that we can dependency inject different services into the database
+// Handler for routes
 type Handler struct {
-	db *mongo.Database
-}
-
-type transp struct {
-	config    *oauth2.Config
-	userAgent string
-}
-
-// RoundTrip sets headers
-func (t *transp) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Set("User-Agent", t.userAgent)
-	//fmt.Sprintf("relevant_for_reddit/0.0 (by /u/%s)", viper.GetString("reddit.username")),
-	// 	fmt.Sprintf("Basic ")
-
-	req.SetBasicAuth(t.config.ClientID, t.config.ClientSecret)
-	// 	"Basic "+viper.GetString("reddit.client")+":"+viper.GetString("reddit.Secret")+")",
-	// )
-
-	return http.DefaultTransport.RoundTrip(req)
+	db     *mongo.Database
+	config *oauth2.Config
+	client *http.Client
+	token  *oauth2.Token
 }
 
 // NewHandler with given database and other dependencies
 func NewHandler(db *mongo.Database) *Handler {
 	return &Handler{
 		db,
+		config.GetAuthConfig(),
+		http.DefaultClient,
+		nil,
 	}
+}
+
+// RoundTrip Sets Headers
+func (h *Handler) RoundTrip(req *http.Request) (*http.Response, error) {
+	req.Header.Set("User-Agent", viper.GetString("reddit.agent"))
+	req.SetBasicAuth(h.config.ClientID, h.config.ClientSecret)
+
+	return http.DefaultTransport.RoundTrip(req)
+}
+
+func (h *Handler) request(method string, url string) []byte {
+
+	// Build Request
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		log.Error(err)
+	}
+	// Set Header
+	req.Header.Set("User-Agent", viper.GetString("reddit.agent"))
+
+	res, err := h.client.Do(req)
+	if err != nil {
+		log.Error(err)
+	}
+	defer res.Body.Close()
+
+	content, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Error(err)
+	}
+
+	return content
 }
