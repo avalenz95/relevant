@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -39,12 +38,8 @@ func (h *Handler) AuthCallback(c echo.Context) (err error) {
 	h.client = h.config.Client(c.Request().Context(), token)
 	fmt.Println("Client is set! Reddit API Requests can be made!")
 
-	// Redirect User to homepage
-	content := h.request(c, http.MethodGet, "https://oauth.reddit.com/api/v1/me", nil)
-	user := struct {
-		Name string `json:"name" bson:"name"`
-	}{}
-	json.Unmarshal(content, &user)
+	userinfo := h.request(c, http.MethodGet, "https://oauth.reddit.com/api/v1/me", nil)
+	// Create user
 
-	return c.String(http.StatusOK, user.Name)
+	return c.JSONBlob(http.StatusOK, userinfo)
 }

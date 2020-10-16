@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/ablades/relevant/models"
@@ -17,7 +16,10 @@ func (h *Handler) UserHome(c echo.Context) (err error) {
 
 // CreateUser add to DB
 func (h *Handler) CreateUser(c echo.Context) error {
-	user := &models.User{
+
+	uStore := models.GetUserStore(h.db)
+
+	user := models.User{
 		ID: primitive.NewObjectID(),
 	}
 	// Bind Payload to model
@@ -26,8 +28,8 @@ func (h *Handler) CreateUser(c echo.Context) error {
 		log.Error(err)
 	}
 
+	uStore.CreateUser(user)
 	//Insert user into db
-	h.db.Collection("Users").InsertOne(context.Background(), user)
 	return c.JSON(http.StatusCreated, user)
 }
 
