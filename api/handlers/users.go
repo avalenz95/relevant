@@ -18,12 +18,19 @@ func (h *Handler) CreateUser(c echo.Context) error {
 	// Get User Info from endpoint
 
 	userName := h.getRedditUserName()
+	// Add list of subreddits to a user objects subs
+	subreddits := h.getRedditUserSubs()
+	subs := make(map[string][]string)
+	for _, subreddit := range subreddits {
+		subs[subreddit] = make([]string, 0)
+	}
 	// Create user
 	uStore := models.GetUserStore(h.db)
 
 	user := models.User{
 		ID:   primitive.NewObjectID(),
 		Name: userName,
+		Subs: subs,
 	}
 
 	uStore.CreateUser(user)
