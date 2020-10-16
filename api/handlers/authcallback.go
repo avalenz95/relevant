@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -36,10 +35,6 @@ func (h *Handler) AuthCallback(c echo.Context) (err error) {
 
 	// Set client for token auto refresh
 	h.client = h.config.Client(c.Request().Context(), token)
-	fmt.Println("Client is set! Reddit API Requests can be made!")
 
-	userinfo := h.request(c, http.MethodGet, "https://oauth.reddit.com/api/v1/me", nil)
-	// Create user
-
-	return c.JSONBlob(http.StatusOK, userinfo)
+	return c.String(http.StatusContinue, "Client is configured! Reddit API Requests can be made!")
 }

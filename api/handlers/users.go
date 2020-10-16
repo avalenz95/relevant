@@ -5,7 +5,6 @@ import (
 
 	"github.com/ablades/relevant/models"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -16,16 +15,15 @@ func (h *Handler) UserHome(c echo.Context) (err error) {
 
 // CreateUser add to DB
 func (h *Handler) CreateUser(c echo.Context) error {
+	// Get User Info from endpoint
 
+	userName := h.getRedditUserName()
+	// Create user
 	uStore := models.GetUserStore(h.db)
 
 	user := models.User{
-		ID: primitive.NewObjectID(),
-	}
-	// Bind Payload to model
-	err := c.Bind(user)
-	if err != nil {
-		log.Error(err)
+		ID:   primitive.NewObjectID(),
+		Name: userName,
 	}
 
 	uStore.CreateUser(user)

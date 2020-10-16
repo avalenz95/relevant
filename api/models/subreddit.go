@@ -22,7 +22,7 @@ type SubRedditStore struct {
 // GetSubRedditStore from database
 func GetSubRedditStore(db *mongo.Database) *UserStore {
 	return &UserStore{
-		coll: db.Collection("subreddits"),
+		coll: db.Collection("Subreddits"),
 	}
 }
 
