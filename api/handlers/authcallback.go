@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	"golang.org/x/oauth2"
 )
 
@@ -16,26 +15,19 @@ import (
 func (h *Handler) AuthCallback(c echo.Context) (err error) {
 	// Get Query Parameters
 	code := c.QueryParam("code")
-	queryState := c.QueryParam("state")
-	state := c.Get(middleware.DefaultCSRFConfig.ContextKey)
-
-	// csrf check
-	if queryState != state {
-		return c.String(http.StatusForbidden, "csrf detected")
-	}
 
 	// Custom http client for exchange call
 	client := &http.Client{
 		Transport: &oauth2.Transport{
 			// configure token
-			Source: h.config.TokenSource(oauth2.NoContext, &oauth2.Token{
+			Source: h.config.TokenSource(c.Request().Context(), &oauth2.Token{
 				AccessToken: code,
 			}),
 			Base: h,
 		},
 	}
 
-	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, client)
+	ctx := context.WithValue(c.Request().Context(), oauth2.HTTPClient, client)
 
 	// Get token from auth code
 	token, err := h.config.Exchange(ctx, code)
@@ -44,15 +36,15 @@ func (h *Handler) AuthCallback(c echo.Context) (err error) {
 	}
 
 	// Set client for token auto refresh
-	h.client = h.config.Client(context.Background(), token)
+	h.client = h.config.Client(c.Request().Context(), token)
 	fmt.Println("Client is set! Reddit API Requests can be made!")
 
 	// Redirect User to homepage
-	content := h.request(http.MethodGet, "https://oauth.reddit.com/api/v1/me")
+	content := h.request(c, http.MethodGet, "https://oauth.reddit.com/api/v1/me", nil)
 	user := struct {
-		ID string `json:"name"`
+		Name string `json:"name" bson:"name"`
 	}{}
 	json.Unmarshal(content, &user)
 
-	return c.String(http.StatusOK, user.ID)
+	return c.String(http.StatusOK, user.Name)
 }

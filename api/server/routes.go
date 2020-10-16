@@ -15,17 +15,23 @@ func (s *Server) SetRoutes() {
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPatch},
 	}))
 
-	handle := handlers.NewHandler(s.db)
+	s.e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
+		TokenLookup: "header:X-XSRF-TOKEN",
+	}))
+
+	// csrfMiddleware := csrf.Protect([]byte("32-byte-long-auth-key"))
+	// s.e.Use(echo.WrapMiddleware(csrfMiddleware))
+	handle := handlers.NewHandler(s.db) // :)
 	//client :=
 	// Authentication Routes
 	s.e.GET("/auth", handle.AuthReddit)
 	s.e.GET("/authcallback", handle.AuthCallback)
 	//s.e.GET("users/:name", handle.UserHome)
-
 	//User
 	// Routes
 	s.e.POST("/users", handle.CreateUser)
 	//s.e.GET("/users/:id", handle.getUser)
 	//s.e.PUT("/users/:id", handle.updateUser)
 	//s.e.DELETE("/users/:id", handle.deleteUser)
+
 }

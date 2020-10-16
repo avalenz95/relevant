@@ -12,8 +12,6 @@ import (
 
 // UserHome page
 func (h *Handler) UserHome(c echo.Context) (err error) {
-
-	h.verifySession(c)
 	return
 }
 
@@ -29,7 +27,7 @@ func (h *Handler) CreateUser(c echo.Context) error {
 	}
 
 	//Insert user into db
-	h.db.Collection("users").InsertOne(context.Background(), user)
+	h.db.Collection("Users").InsertOne(context.Background(), user)
 	return c.JSON(http.StatusCreated, user)
 }
 

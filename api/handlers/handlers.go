@@ -1,12 +1,12 @@
 package handlers
 
 import (
+	"io"
 	"io/ioutil"
 	"net/http"
 
 	"github.com/ablades/relevant/config"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -39,25 +39,11 @@ func (h *Handler) RoundTrip(req *http.Request) (*http.Response, error) {
 	return http.DefaultTransport.RoundTrip(req)
 }
 
-func (h *Handler) verifySession(c echo.Context) error {
-	cookie, err := c.Cookie("_csrf")
-	if err != nil {
-		log.Error(err)
-	}
-
-	// Verify csrfs match
-	if cookie.Value != c.Get(middleware.DefaultCSRFConfig.ContextKey) {
-		return c.String(http.StatusForbidden, "You do not have access to this page")
-	}
-
-	return c.String(http.StatusOK, "Valid")
-}
-
 //Send Requests to Reddit api
-func (h *Handler) request(method string, url string) []byte {
+func (h *Handler) request(ctx echo.Context, method string, url string, body io.Reader) []byte {
 
 	// Build Request
-	req, err := http.NewRequest(method, url, nil)
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		log.Error(err)
 	}

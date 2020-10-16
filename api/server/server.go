@@ -28,6 +28,7 @@ func NewServer(database *mongo.Database) *Server {
 func (s *Server) Start(port string) {
 	// register routes
 	s.SetRoutes()
+
 	s.e.Logger.Fatal(s.e.Start(port))
 }
 
