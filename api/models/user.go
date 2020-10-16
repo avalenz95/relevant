@@ -36,3 +36,14 @@ func (uStore *UserStore) CreateUser(user User) primitive.ObjectID {
 
 	return inserted.InsertedID.(primitive.ObjectID)
 }
+
+// GetUserByID from db
+func (uStore *UserStore) GetUserByID(id primitive.ObjectID) *User {
+
+	result := uStore.coll.FindOne(context.Background(), id)
+	// Unmarshall into user object
+	user := &User{}
+	result.Decode(user)
+
+	return user
+}
