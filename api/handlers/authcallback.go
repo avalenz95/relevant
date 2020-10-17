@@ -35,6 +35,7 @@ func (h *Handler) AuthCallback(c echo.Context) (err error) {
 
 	// Set client for token auto refresh
 	h.client = h.config.Client(oauth2.NoContext, token)
-	username := h.getRedditUserName(c)
-	return c.String(http.StatusOK, username)
+	username := h.getRedditUserName()
+
+	return c.JSON(http.StatusOK, map[string]interface{}{"name": username})
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/ablades/relevant/models"
 	"github.com/labstack/echo/v4"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // UserHome page
@@ -13,11 +12,31 @@ func (h *Handler) UserHome(c echo.Context) (err error) {
 	return
 }
 
-// CreateUser add to DB
-func (h *Handler) CreateUser(c echo.Context) error {
-	// Get User Info from endpoint
+// UpdateSubs for active user
+func (h *Handler) UpdateSubs(c echo.Context) (err error) {
+	userName := c.Param("name")
+	uStore := models.GetUserStore(h.db)
 
-	userName := h.getRedditUserName(c)
+	subList := h.getRedditUserSubs()
+
+	if uStore.UpdateUserSubs(userName, subList) {
+		return c.JSON(http.StatusOK, userName)
+	}
+
+	return c.JSON(http.StatusNotModified, subList)
+}
+
+// CreateUser add to DB
+func (h *Handler) CreateUser(c echo.Context) (err error) {
+	userName := c.Param("name")
+	uStore := models.GetUserStore(h.db)
+	user := uStore.GetUserByName(userName)
+
+	// user already exists
+	if user != nil {
+		return c.JSON(http.StatusSeeOther, user.Name)
+	}
+	//userName := h.getRedditUserName()
 	// Add list of subreddits to a user objects subs
 	subreddits := h.getRedditUserSubs()
 	subs := make(map[string][]string)
@@ -25,17 +44,23 @@ func (h *Handler) CreateUser(c echo.Context) error {
 		subs[subreddit] = make([]string, 0)
 	}
 	// Create user
-	uStore := models.GetUserStore(h.db)
-
-	user := models.User{
-		ID:   primitive.NewObjectID(),
+	newUser := models.User{
 		Name: userName,
 		Subs: subs,
 	}
 
-	uStore.CreateUser(user)
+	uStore.CreateUser(newUser)
 	//Insert user into db
-	return c.JSON(http.StatusCreated, user)
+	return c.JSON(http.StatusCreated, user.Name)
+}
+
+// DeleteUser and remove existing content
+func (h *Handler) DeleteUser(c echo.Context) (err error) {
+	userName := c.Param("name")
+	uStore := models.GetUserStore(h.db)
+	uStore.DeleteUserByName(userName)
+
+	return c.String(http.StatusGone, "Deleted:"+userName)
 }
 
 // func getUser(c echo.Context) error {

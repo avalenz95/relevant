@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/labstack/gommon/log"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -27,6 +28,41 @@ func GetUserStore(db *mongo.Database) *UserStore {
 	}
 }
 
+// UpdateUserSubs add new subscriptions from reddit into DB
+func (uStore *UserStore) UpdateUserSubs(name string, subList []string) bool {
+	result := uStore.coll.FindOne(context.Background(), bson.M{"name": name})
+	if result.Err() == mongo.ErrNoDocuments {
+		log.Error(result.Err())
+		return false
+	}
+
+	user := &User{}
+	result.Decode(user)
+
+	// Make a new map, case handles user unsubscribing and subscribing to various subreddits
+	subMap := make(map[string][]string)
+	// Loop over subs
+	for _, subName := range subList {
+		// Check to see if subName is in old map
+		keywords, contains := user.Subs[subName]
+		if contains {
+			subMap[subName] = keywords
+		} else {
+			subMap[subName] = make([]string, 0)
+		}
+	}
+	//Reassign subs
+	user.Subs = subMap
+
+	//Replace user object TODO: Determine if it's theres a performance boon by just updating subs instead of readding
+	_, err := uStore.coll.ReplaceOne(context.Background(), bson.M{"name": name}, user)
+	if err != nil {
+		log.Error(err)
+	}
+
+	return true
+}
+
 // CreateUser object
 func (uStore *UserStore) CreateUser(user User) primitive.ObjectID {
 	inserted, err := uStore.coll.InsertOne(context.Background(), user)
@@ -37,13 +73,28 @@ func (uStore *UserStore) CreateUser(user User) primitive.ObjectID {
 	return inserted.InsertedID.(primitive.ObjectID)
 }
 
-// GetUserByID from db
-func (uStore *UserStore) GetUserByID(id primitive.ObjectID) *User {
+// GetUserByName from db
+func (uStore *UserStore) GetUserByName(name string) *User {
 
-	result := uStore.coll.FindOne(context.Background(), id)
+	result := uStore.coll.FindOne(context.Background(), bson.M{"name": name})
+	// Unmarshall into user object
+	if result.Err() == mongo.ErrNoDocuments {
+		return nil
+	}
+
 	// Unmarshall into user object
 	user := &User{}
 	result.Decode(user)
 
 	return user
+}
+
+// DeleteUserByName from DB
+func (uStore *UserStore) DeleteUserByName(name string) bool {
+	_, err := uStore.coll.DeleteOne(context.Background(), bson.M{"name": name})
+	if err != nil {
+		log.Error(err)
+		return false
+	}
+	return true
 }

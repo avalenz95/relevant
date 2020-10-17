@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 )
@@ -83,14 +82,15 @@ func (h *Handler) getRedditUserSubs() []string {
 }
 
 // Get the users name from the api
-func (h *Handler) getRedditUserName(c echo.Context) string {
+func (h *Handler) getRedditUserName() string {
 	// User info struct
 	userInfo := struct {
 		Name string `json:"name"`
 	}{}
 
 	content := h.getRequestBytes("https://oauth.reddit.com/api/v1/me")
-	json.Unmarshal(content, &userInfo)
 	fmt.Println(string(content))
+	json.Unmarshal(content, &userInfo)
+	fmt.Println(userInfo)
 	return userInfo.Name
 }
