@@ -15,6 +15,7 @@ type Handler struct {
 	config *oauth2.Config
 	client *http.Client
 	token  *oauth2.Token
+	T      http.RoundTripper
 }
 
 // NewHandler with given database and other dependencies
@@ -24,13 +25,14 @@ func NewHandler(db *mongo.Database) *Handler {
 		config.GetAuthConfig(),
 		http.DefaultClient,
 		nil,
+		http.DefaultTransport,
 	}
 }
 
 // RoundTrip Sets Headers
 func (h *Handler) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Set("User-Agent", viper.GetString("reddit.agent"))
+	req.Header.Add("User-Agent", viper.GetString("reddit.agent"))
 	req.SetBasicAuth(h.config.ClientID, h.config.ClientSecret)
 
-	return http.DefaultTransport.RoundTrip(req)
+	return h.T.RoundTrip(req)
 }

@@ -17,7 +17,7 @@ func (h *Handler) UserHome(c echo.Context) (err error) {
 func (h *Handler) CreateUser(c echo.Context) error {
 	// Get User Info from endpoint
 
-	userName := h.getRedditUserName()
+	userName := h.getRedditUserName(c)
 	// Add list of subreddits to a user objects subs
 	subreddits := h.getRedditUserSubs()
 	subs := make(map[string][]string)

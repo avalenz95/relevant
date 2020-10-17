@@ -2,20 +2,31 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"net/http"
 
+	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"github.com/spf13/viper"
 )
 
 // Reddit API handlers
 
 //handle get requests to reddit api
 func (h *Handler) getRequestBytes(endpoint string) []byte {
-
-	resp, err := h.client.Get(endpoint)
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
 		log.Error(err)
 	}
+
+	req.Header.Add("User-Agent", viper.GetString("reddit.agent"))
+
+	resp, err := h.client.Do(req)
+	if err != nil {
+		log.Error(err)
+	}
+	defer resp.Body.Close()
 
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -49,7 +60,7 @@ func (h *Handler) getRedditUserSubs() []string {
 
 	var content []byte
 	for {
-		// Inital content has not been set
+		// Initial content has not been set
 		if content == nil {
 			content := h.getRequestBytes("https://oauth.reddit.com/subreddits/mine/subscriber.json?limit=100")
 			json.Unmarshal(content, &subreddit)
@@ -72,7 +83,7 @@ func (h *Handler) getRedditUserSubs() []string {
 }
 
 // Get the users name from the api
-func (h *Handler) getRedditUserName() string {
+func (h *Handler) getRedditUserName(c echo.Context) string {
 	// User info struct
 	userInfo := struct {
 		Name string `json:"name"`
@@ -80,6 +91,6 @@ func (h *Handler) getRedditUserName() string {
 
 	content := h.getRequestBytes("https://oauth.reddit.com/api/v1/me")
 	json.Unmarshal(content, &userInfo)
-
+	fmt.Println(string(content))
 	return userInfo.Name
 }
