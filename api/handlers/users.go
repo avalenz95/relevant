@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/ablades/relevant/models"
@@ -10,6 +11,7 @@ import (
 // UserHome page
 func (h *Handler) UserHome(c echo.Context) (err error) {
 	userName := c.Param("name")
+	fmt.Println(userName)
 	uStore := models.GetUserStore(h.db)
 	user := uStore.GetUserByName(userName)
 
@@ -38,7 +40,7 @@ func (h *Handler) CreateUser(c echo.Context) (err error) {
 
 	// user already exists
 	if user != nil {
-		return c.JSON(http.StatusSeeOther, user.Name)
+		return c.Redirect(http.StatusFound, "user/"+userName)
 	}
 	//userName := h.getRedditUserName()
 	// Add list of subreddits to a user objects subs

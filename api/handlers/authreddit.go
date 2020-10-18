@@ -9,6 +9,7 @@ import (
 
 // AuthReddit route
 func (h *Handler) AuthReddit(c echo.Context) (err error) {
+
 	// Set state and additional params
 	state := c.Get("csrf").(string)
 
@@ -17,5 +18,6 @@ func (h *Handler) AuthReddit(c echo.Context) (err error) {
 		oauth2.SetAuthURLParam("response_type", "code"),
 		oauth2.SetAuthURLParam("duration", "temporary"),
 	)
-	return c.Redirect(http.StatusTemporaryRedirect, url)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{"url": url})
 }

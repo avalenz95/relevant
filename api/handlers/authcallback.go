@@ -37,5 +37,6 @@ func (h *Handler) AuthCallback(c echo.Context) (err error) {
 	h.client = h.config.Client(oauth2.NoContext, token)
 	username := h.getRedditUserName()
 
-	return c.JSON(http.StatusOK, map[string]interface{}{"name": username})
+	//return c.JSON(http.StatusOK, map[string]interface{}{"name": username})
+	return c.Redirect(http.StatusTemporaryRedirect, "create/"+username)
 }
