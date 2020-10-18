@@ -9,7 +9,11 @@ import (
 
 // UserHome page
 func (h *Handler) UserHome(c echo.Context) (err error) {
-	return
+	userName := c.Param("name")
+	uStore := models.GetUserStore(h.db)
+	user := uStore.GetUserByName(userName)
+
+	return c.JSON(http.StatusOK, user)
 }
 
 // UpdateSubs for active user
