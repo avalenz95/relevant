@@ -13,7 +13,7 @@ func (h *Handler) UserHome(c echo.Context) (err error) {
 }
 
 // UpdateSubs for active user
-func (h *Handler) UpdateSubs(c echo.Context) (err error) {
+func (h *Handler) UpdateUserSubscriptions(c echo.Context) (err error) {
 	userName := c.Param("name")
 	uStore := models.GetUserStore(h.db)
 

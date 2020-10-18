@@ -73,6 +73,16 @@ func (subStore *SubRedditStore) CreateSubReddit(id string, name string, bannerUr
 	return true
 }
 
+func (subStore *SubRedditStore) UpdateTreeKeywords(subName string, userName string, keyword string) {
+	result := subStore.coll.FindOne(context.Background(), bson.M{"name": subName})
+
+	subreddit := &SubReddit{}
+	result.Decode(subreddit)
+	subreddit.Tree.InsertKeyword(keyword, userName)
+
+	subStore.coll.ReplaceOne(context.Background(), bson.M{"name": subName}, subreddit)
+}
+
 // // CreateSubReddit Object TODO: Change this to a bulk insert/write
 // func (subStore *SubRedditStore) CreateSubReddits(subredditsMap map[string]string) {
 

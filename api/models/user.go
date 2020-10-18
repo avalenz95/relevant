@@ -98,3 +98,16 @@ func (uStore *UserStore) DeleteUserByName(name string) bool {
 	}
 	return true
 }
+
+func (uStore *UserStore) UpdateUserKeywords(subName string, userName string, keyword string) []string {
+	result := uStore.coll.FindOne(context.Background(), bson.M{"name": userName})
+
+	// Unmarshall into user object
+	user := &User{}
+	result.Decode(user)
+
+	user.Subs[subName] = append(user.Subs[subName], keyword)
+	uStore.coll.ReplaceOne(context.Background(), bson.M{"name": userName}, user)
+
+	return user.Subs[subName]
+}

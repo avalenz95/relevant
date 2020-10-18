@@ -1,5 +1,26 @@
 package handlers
 
+import (
+	"net/http"
+
+	"github.com/ablades/relevant/models"
+	"github.com/labstack/echo/v4"
+)
+
+//UpdateKeywords in a user and in DB
+func (h *Handler) UpdateKeywords(c echo.Context) (err error) {
+	uStore := models.GetUserStore(h.db)
+	subStore := models.GetSubRedditStore(h.db)
+	userName := c.Param("name")
+	subName := c.Param("subname")
+	keyword := c.Param("keyword")
+
+	subStore.UpdateTreeKeywords(subName, userName, keyword)
+	updatedKeywords := uStore.UpdateUserKeywords(subName, userName, keyword)
+
+	return c.JSON(http.StatusOK, updatedKeywords)
+}
+
 // // UpdateBanners in DB
 // func (h *Handler) UpdateBanners(c echo.Context) (err error) {
 // 	subStore := models.GetSubRedditStore(h.db)

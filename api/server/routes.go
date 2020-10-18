@@ -31,7 +31,8 @@ func (s *Server) SetRoutes() {
 	// Routes
 	s.e.POST("/create/:name", handle.CreateUser)
 	s.e.GET("/user/:name", handle.UserHome)
-	s.e.PUT("/update/subs/:name", handle.UpdateSubs)
+	s.e.PUT("/update/subs/:name", handle.UpdateUserSubscriptions)
+	s.e.PUT("/user/:name/:subname/:keyword", handle.UpdateKeywords)
 	//s.e.GET("/users/:id", handle.getUser)
 	//s.e.PUT("/users/:id", handle.updateUser)
 	//s.e.DELETE("/users/:id", handle.deleteUser)
