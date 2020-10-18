@@ -1,17 +1,22 @@
 package models
 
 import (
+	"context"
+
 	"github.com/ablades/prefix"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/labstack/gommon/log"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 //SubReddit db representation
 type SubReddit struct {
-	ID     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Name   string             `json:"name,omitempty" bson:"name,omitempty"`
-	Banner primitive.Binary   `json:"banner,omitempty" bson:"banner,omitempty"`
-	Tree   prefix.Tree        `json:"tree,omitempty" bson:"tree,omitempty"`
+	ID        string `json:"_id,omitempty" bson:"_id,omitempty"`
+	Name      string `json:"name,omitempty" bson:"name,omitempty"`
+	BannerUrl string `json:"banner,omitempty" bson:"banner,omitempty"`
+	//Color  string
+	Tree prefix.Tree `json:"tree,omitempty" bson:"tree,omitempty"`
 }
 
 // SubRedditStore for db
@@ -20,36 +25,74 @@ type SubRedditStore struct {
 }
 
 // GetSubRedditStore from database
-func GetSubRedditStore(db *mongo.Database) *UserStore {
-	return &UserStore{
+func GetSubRedditStore(db *mongo.Database) *SubRedditStore {
+	return &SubRedditStore{
 		coll: db.Collection("Subreddits"),
 	}
 }
 
-//fetchBanner from subreddit TODO Add other sources
-func fetchBanner(subreddit SubReddit) {
-	// 	url := fmt.Sprintf("https://www.reddit.com/%s/about.json", subname)
-	// 	request, err := http.NewRequest("GET", url, nil)
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
+// GetAllSubRedditNames from DB
+func (subStore *SubRedditStore) GetAllSubRedditNames() []SubReddit {
+	results, err := subStore.coll.Find(
+		context.Background(),
+		bson.D{},
+		options.Find().SetProjection(bson.D{{Key: "name", Value: 1}}),
+	)
+	if err != nil {
+		log.Error(err)
+	}
 
-	// 	request.Header.Set("User-Agent", fmt.Sprintf("relevant_for_reddit/0.0 (by /u/%s)", creds.Username))
+	subreddits := &[]SubReddit{}
 
-	// 	content := sendRequest(request)
-	// 	var as = aboutSubreddit{}
-	// 	json.Unmarshal(content, &as)
-	// 	fmt.Printf("Fetched Banner url: %s \n", as.Data.BannerImg)
-	// 	return as.Data.BannerImg
-	//
+	results.All(context.Background(), subreddits)
+
+	return *subreddits
 }
 
-// CreateSubReddit Object
-func (subStore *SubRedditStore) CreateSubReddit(subreddit SubReddit) {
-	// Give it an id
-	// Name
-	// Fetch a banner
-	//Store banner image
-	//Create a new prefix tree
+func (subStore *SubRedditStore) CreateSubReddit(id string, name string, bannerUrl string) bool {
+	result := subStore.coll.FindOne(context.Background(), bson.M{"_id": id})
+	if result.Err() != mongo.ErrNoDocuments {
+		return false
+	}
+	// resp, err := http.Get(bannerUrl)
+	// if err != nil {
+	// 	log.Error(err)
+	// }
 
+	// // img, fmtName, err := image.Decode(resp.Body)
+	// // fmt.Print(fmtName)
+
+	subreddit := SubReddit{
+		ID:        id,
+		Name:      name,
+		BannerUrl: bannerUrl,
+		Tree:      prefix.NewTree(name),
+	}
+
+	subStore.coll.InsertOne(context.Background(), subreddit)
+	return true
 }
+
+// // CreateSubReddit Object TODO: Change this to a bulk insert/write
+// func (subStore *SubRedditStore) CreateSubReddits(subredditsMap map[string]string) {
+
+// 	for name, id := range subredditsMap {
+// 		result := subStore.coll.FindOne(context.Background(), bson.M{"_id": id})
+// 		// Does not exist add to db
+// 		if result.Err() == mongo.ErrNoDocuments {
+// 			subreddit := SubReddit{
+// 				ID:   id,
+// 				Name: name,
+// 				Tree: prefix.NewTree(name),
+// 			}
+// 		}
+
+// 	}
+
+// 	// Give it an id
+// 	// Name
+// 	// Fetch a banner
+// 	//Store banner image
+// 	//Create a new prefix tree
+
+// }

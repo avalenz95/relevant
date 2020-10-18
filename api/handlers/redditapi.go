@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/ablades/relevant/models"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 )
@@ -36,18 +37,21 @@ func (h *Handler) getRequestBytes(endpoint string) []byte {
 }
 
 // Get all of a users subscribed subreddits
-func (h *Handler) getRedditUserSubs() []string {
+func (h *Handler) getRedditUserSubs() map[string]string {
+	subStore := models.GetSubRedditStore(h.db)
+	subredditsMap := make(map[string]string)
 
-	subreddits := make([]string, 0)
 	// Subreddit JSON Data struct
-	subreddit := struct {
+	subredditJSON := struct {
 		Data struct {
 			Children []struct {
 				Data struct {
 					DisplayName string `json:"display_name"`
 					//Subscribers         int    `json:"subscribers"`
 					//Name                string `json:"name"`
-					//ID                  string `json:"id"`
+					ID                    string `json:"id"`
+					BannerImg             string `json:"banner_img"`
+					BannerBackgroundColor string `json:"banner_background_color"`
 					//DisplayNamePrefixed string `json:"display_name_prefixed"`
 					//Description         string `json:"description"`
 					//URL                 string `json:"url"`
@@ -62,23 +66,25 @@ func (h *Handler) getRedditUserSubs() []string {
 		// Initial content has not been set
 		if content == nil {
 			content := h.getRequestBytes("https://oauth.reddit.com/subreddits/mine/subscriber.json?limit=100")
-			json.Unmarshal(content, &subreddit)
+			json.Unmarshal(content, &subredditJSON)
 		} else {
 			// Pagination - Use After for subsequent requests
-			content := h.getRequestBytes("https://oauth.reddit.com/subreddits/mine/subscriber.json?limit=100&after=" + subreddit.Data.After)
-			json.Unmarshal(content, &subreddit)
+			content := h.getRequestBytes("https://oauth.reddit.com/subreddits/mine/subscriber.json?limit=100&after=" + subredditJSON.Data.After)
+			json.Unmarshal(content, &subredditJSON)
 		}
-		// Add subs to list
-		for _, item := range subreddit.Data.Children {
-			subreddits = append(subreddits, item.Data.DisplayName)
+		// Add subs name and id to list
+		for _, item := range subredditJSON.Data.Children {
+			subredditsMap[item.Data.DisplayName] = item.Data.ID
+
+			subStore.CreateSubReddit(item.Data.ID, item.Data.DisplayName, item.Data.BannerImg)
 		}
 		// continue till no more results available
-		if subreddit.Data.After == "" {
+		if subredditJSON.Data.After == "" {
 			break
 		}
 	}
 
-	return subreddits
+	return subredditsMap
 }
 
 // Get the users name from the api
@@ -94,3 +100,35 @@ func (h *Handler) getRedditUserName() string {
 	fmt.Println(userInfo)
 	return userInfo.Name
 }
+
+// // UpdateBanners for subreddits
+// func (h *Handler) fetchBanners(subreddits map[string]string) {
+// 	u := &url.URL{
+// 		Scheme: "https",
+// 		Host:   "reddit.com",
+// 		Path:   "api/info.json",
+// 	}
+// 	// Add subreddit id to the query
+// 	for _, id := range subreddits {
+// 		u.Query().Add("id", id)
+// 	}
+// 	url := u.Query().Encode()
+
+// 	h.getRequestBytes(url)
+
+// }
+
+// func (h *Handler) fetchBanner(id string) {
+// 	u := &url.URL{
+// 		Scheme: "https",
+// 		Host:   "reddit.com",
+// 		Path:   "api/info.json",
+// 	}
+
+// 	u.Query().Add("id", id)
+
+// 	url := u.Query().Encode()
+
+// 	h.getRequestBytes(url)
+
+//}

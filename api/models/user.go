@@ -29,7 +29,7 @@ func GetUserStore(db *mongo.Database) *UserStore {
 }
 
 // UpdateUserSubs add new subscriptions from reddit into DB
-func (uStore *UserStore) UpdateUserSubs(name string, subList []string) bool {
+func (uStore *UserStore) UpdateUserSubs(name string, subList map[string]string) bool {
 	result := uStore.coll.FindOne(context.Background(), bson.M{"name": name})
 	if result.Err() == mongo.ErrNoDocuments {
 		log.Error(result.Err())
@@ -42,7 +42,7 @@ func (uStore *UserStore) UpdateUserSubs(name string, subList []string) bool {
 	// Make a new map, case handles user unsubscribing and subscribing to various subreddits
 	subMap := make(map[string][]string)
 	// Loop over subs
-	for _, subName := range subList {
+	for subName, _ := range subList {
 		// Check to see if subName is in old map
 		keywords, contains := user.Subs[subName]
 		if contains {
@@ -54,7 +54,7 @@ func (uStore *UserStore) UpdateUserSubs(name string, subList []string) bool {
 	//Reassign subs
 	user.Subs = subMap
 
-	//Replace user object TODO: Determine if it's theres a performance boon by just updating subs instead of readding
+	//Replace user object TODO: Determine if it's theres a performance boon by just updating subs instead of re-adding
 	_, err := uStore.coll.ReplaceOne(context.Background(), bson.M{"name": name}, user)
 	if err != nil {
 		log.Error(err)
