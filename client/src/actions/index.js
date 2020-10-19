@@ -50,25 +50,13 @@ export const KEYWORD_ERROR = 'KEYWORD_ERROR'
 
 export const addKeywordToSub = (subreddit, username, keyword) => {
     return async(dispatch) => {
-        // Build Data 
-        const data = {
-            username: username,
-            subreddit: subreddit,
-            keyword: keyword,
-        }
 
         // Build url
         const url = `http://localhost:8000/user/${username}/${subreddit}/${keyword}`
 
         try {
             // Send a post request
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify(data),
-            })
+            const response = await fetch(url)
 
             await dispatch(keywordSuccess(response.status))
             await dispatch(loadUserData(username))
