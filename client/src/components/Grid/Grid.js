@@ -17,7 +17,7 @@ function Grid() {
 
     } else {
         // eslint-disable-next-line array-callback-return
-        cards = Object.entries(userData.subreddits).map(([subName, keywords], index) => {
+        cards = Object.entries(userData.subs).map(([subName, keywords], index) => {
             const banner = banners[subName]
             return (
                 //pass image as prop to card along with subreddits ect.

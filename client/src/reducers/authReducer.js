@@ -3,7 +3,7 @@ import { AUTH_SUCCESS, AUTH_ERROR } from '../actions/index.js'
 const authReducer = (state = false, { type, payload }) => {
     switch(type){
         case AUTH_SUCCESS:
-            return payload.res
+            return state
         
         case AUTH_ERROR:
             return payload.err

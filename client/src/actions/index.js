@@ -26,7 +26,7 @@ export const loadBannersError = (err) => {
 export const loadBanners = (username) => {
     return async(dispatch) => {
         // Build url
-        const url = "http://localhost:8080/banners/" + username
+        const url = "http://localhost:8000/banners/" + username
         // Send a request
         try {
             const response = await fetch(url)
@@ -58,7 +58,7 @@ export const addKeywordToSub = (subreddit, username, keyword) => {
         }
 
         // Build url
-        const url = 'http://localhost:8080/addkeyword'
+        const url = `http://localhost:8000/user/${username}/${subreddit}/${keyword}`
 
         try {
             // Send a post request
@@ -141,11 +141,12 @@ export const userDataError = (err) => {
 export const loadUserData = (username) => {
     return async(dispatch) => {
         // Build url
-        const url = "http://localhost:8080/user/" + username
+        const url = "http://localhost:8000/user/" + username
         // Send a request
         try {
             const response = await fetch(url)
             const json = await response.json()
+            console.log(json)
             // Send to dispatcher
             dispatch(userDataSuccess(json))
             await dispatch(loadBanners(username))
@@ -178,13 +179,21 @@ export const authError = (err) => {
 export const loadAuth = () => {
     return async(dispatch) => {
         // Build url
-        const url = "http://localhost:8080/r/login"
+        console.log("here")
+        const url = "http://localhost:8000/auth"
         // Send a request
         try {
-            const response = await fetch(url)
+            const response = await fetch(url, {
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                }
+            })
+            const json = await response.json()
+            console.log(json)
             dispatch(authSuccess())
-            window.location.assign(response.request.responseURL)
+            window.location.assign(json["url"])
         } catch(err) {
+            console.log(err)
             dispatch(authError(err))
         }
     }
