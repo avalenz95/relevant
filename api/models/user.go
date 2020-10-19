@@ -42,7 +42,7 @@ func (uStore *UserStore) UpdateUserSubs(name string, subList map[string]string) 
 	// Make a new map, case handles user unsubscribing and subscribing to various subreddits
 	subMap := make(map[string][]string)
 	// Loop over subs
-	for subName, _ := range subList {
+	for subName := range subList {
 		// Check to see if subName is in old map
 		keywords, contains := user.Subs[subName]
 		if contains {

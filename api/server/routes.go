@@ -19,16 +19,13 @@ func (s *Server) SetRoutes() {
 		TokenLookup: "header:X-XSRF-TOKEN",
 	}))
 
-	// csrfMiddleware := csrf.Protect([]byte("32-byte-long-auth-key"))
-	// s.e.Use(echo.WrapMiddleware(csrfMiddleware))
-	handle := handlers.NewHandler(s.db) // :)
-	//client :=
+	handle := handlers.NewHandler(s.db)
 	// Authentication Routes
 	s.e.GET("/auth", handle.AuthReddit)
 	s.e.GET("/authcallback", handle.AuthCallback)
 	//s.e.GET("users/:name", handle.UserHome)
 	//User
-	// Routes TODO: CHANGE PROPERONES TO POST
+	// Routes TODO: CHANGE PROPER ONES TO POST
 	s.e.GET("/create/:name", handle.CreateUser)
 	s.e.GET("/user/:name", handle.UserHome)
 	s.e.GET("/update/subs/:name", handle.UpdateUserSubscriptions)

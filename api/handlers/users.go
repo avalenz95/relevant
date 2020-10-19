@@ -42,27 +42,24 @@ func (h *Handler) CreateUser(c echo.Context) (err error) {
 		Value: userName,
 		Path:  "/",
 	})
-	// user already exists
-	if user != nil {
-		//TODO: FIX APPENDING URL PROBLEM
-		return c.Redirect(http.StatusPermanentRedirect, "http://localhost:3000/user/"+userName)
-	}
-	//userName := h.getRedditUserName()
-	// Add list of subreddits to a user objects subs
-	subreddits := h.getRedditUserSubs()
-	subs := make(map[string][]string)
-	for _, subreddit := range subreddits {
-		subs[subreddit] = make([]string, 0)
-	}
-	// Create user
-	newUser := models.User{
-		Name: userName,
-		Subs: subs,
+	// create user
+	if user == nil {
+		// Add list of subreddits to a user objects subs
+		subreddits := h.getRedditUserSubs()
+		subs := make(map[string][]string)
+		for subName := range subreddits {
+			subs[subName] = make([]string, 0)
+		}
+		// Create user
+		newUser := models.User{
+			Name: userName,
+			Subs: subs,
+		}
+		// Insert user into db
+		uStore.CreateUser(newUser)
 	}
 
-	uStore.CreateUser(newUser)
-	//Insert user into db
-	return c.JSON(http.StatusCreated, user.Name)
+	return c.Redirect(http.StatusPermanentRedirect, "http://localhost:3000/user/"+userName)
 }
 
 // DeleteUser and remove existing content

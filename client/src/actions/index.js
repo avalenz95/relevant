@@ -116,6 +116,7 @@ export const loadUsername = () => {
         if(username){
             await dispatch(usernameSuccess(username))
             await dispatch(loadUserData(username))
+            await dispatch(loadBanners(username))
         } else {
             dispatch(usernameError())
         }

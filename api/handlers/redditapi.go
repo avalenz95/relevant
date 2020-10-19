@@ -61,27 +61,29 @@ func (h *Handler) getRedditUserSubs() map[string]string {
 		} `json:"data"`
 	}{}
 
-	var content []byte
-	for {
+	firstRequest := true
+	for subredditJSON.Data.After == "" {
+
+		var content []byte
 		// Initial content has not been set
-		if content == nil {
-			content := h.getRequestBytes("https://oauth.reddit.com/subreddits/mine/subscriber.json?limit=100")
+		if firstRequest == true {
+			content = h.getRequestBytes("https://oauth.reddit.com/subreddits/mine/subscriber.json?limit=100")
 			json.Unmarshal(content, &subredditJSON)
+			firstRequest = false
 		} else {
 			// Pagination - Use After for subsequent requests
-			content := h.getRequestBytes("https://oauth.reddit.com/subreddits/mine/subscriber.json?limit=100&after=" + subredditJSON.Data.After)
+			content = h.getRequestBytes("https://oauth.reddit.com/subreddits/mine/subscriber.json?limit=100&after=" + subredditJSON.Data.After)
 			json.Unmarshal(content, &subredditJSON)
 		}
 		// Add subs name and id to list
 		for _, item := range subredditJSON.Data.Children {
 			subredditsMap[item.Data.DisplayName] = item.Data.ID
-
+			fmt.Println("--")
+			fmt.Println(item.Data.DisplayName)
 			subStore.CreateSubReddit(item.Data.ID, item.Data.DisplayName, item.Data.BannerImg)
 		}
-		// continue till no more results available
-		if subredditJSON.Data.After == "" {
-			break
-		}
+
+		fmt.Println("here")
 	}
 
 	return subredditsMap
