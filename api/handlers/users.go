@@ -18,7 +18,7 @@ func (h *Handler) UserHome(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, user)
 }
 
-// UpdateSubs for active user
+// UpdateUserSubscriptions for active user
 func (h *Handler) UpdateUserSubscriptions(c echo.Context) (err error) {
 	userName := c.Param("name")
 	uStore := models.GetUserStore(h.db)
@@ -37,10 +37,15 @@ func (h *Handler) CreateUser(c echo.Context) (err error) {
 	userName := c.Param("name")
 	uStore := models.GetUserStore(h.db)
 	user := uStore.GetUserByName(userName)
-
+	c.SetCookie(&http.Cookie{
+		Name:  "username",
+		Value: userName,
+		Path:  "/",
+	})
 	// user already exists
 	if user != nil {
-		return c.Redirect(http.StatusFound, "user/"+userName)
+		//TODO: FIX APPENDING URL PROBLEM
+		return c.Redirect(http.StatusPermanentRedirect, "http://localhost:3000/user/"+userName)
 	}
 	//userName := h.getRedditUserName()
 	// Add list of subreddits to a user objects subs
@@ -67,6 +72,22 @@ func (h *Handler) DeleteUser(c echo.Context) (err error) {
 	uStore.DeleteUserByName(userName)
 
 	return c.String(http.StatusGone, "Deleted:"+userName)
+}
+
+// GetUserSubBanners from DB
+func (h *Handler) GetUserSubBanners(c echo.Context) (err error) {
+	uStore := models.GetUserStore(h.db)
+	subStore := models.GetSubRedditStore(h.db)
+	userName := c.Param("name")
+
+	user := uStore.GetUserByName(userName)
+	banners := make(map[string]string)
+
+	for subName := range user.Subs {
+		banners[subName] = subStore.GetSubReddit(subName).BannerUrl
+	}
+
+	return c.JSON(http.StatusOK, banners)
 }
 
 // func getUser(c echo.Context) error {

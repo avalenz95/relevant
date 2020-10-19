@@ -33,6 +33,7 @@ func (s *Server) SetRoutes() {
 	s.e.GET("/user/:name", handle.UserHome)
 	s.e.GET("/update/subs/:name", handle.UpdateUserSubscriptions)
 	s.e.GET("/user/:name/:subname/:keyword", handle.UpdateKeywords)
+	s.e.GET("/banners/:name", handle.GetUserSubBanners)
 	//s.e.GET("/users/:id", handle.getUser)
 	//s.e.PUT("/users/:id", handle.updateUser)
 	//s.e.DELETE("/users/:id", handle.deleteUser)

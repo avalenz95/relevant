@@ -73,6 +73,16 @@ func (subStore *SubRedditStore) CreateSubReddit(id string, name string, bannerUr
 	return true
 }
 
+// GetSubReddit from DB
+func (subStore *SubRedditStore) GetSubReddit(name string) *SubReddit {
+	result := subStore.coll.FindOne(context.Background(), bson.M{"name": name})
+	subreddit := &SubReddit{}
+	result.Decode(subreddit)
+
+	return subreddit
+}
+
+//UpdateTreeKeywords in DB
 func (subStore *SubRedditStore) UpdateTreeKeywords(subName string, userName string, keyword string) {
 	result := subStore.coll.FindOne(context.Background(), bson.M{"name": subName})
 
