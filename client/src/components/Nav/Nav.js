@@ -15,9 +15,7 @@ function Nav() {
     } 
     return (
         <nav className="navbar">
-            <div className="title">
-                RELEVANT
-            </div>
+            <div className="title">Relevant</div>
 
             <div className="appusername">
                 {name !== "" ? 
