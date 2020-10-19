@@ -19,7 +19,7 @@ function Card(props) {
     })
 
     return (
-        <div className="card" style={{backgroundImage: `url(${banner})`}}>
+        <div className="card">
                 <div className="container">
                     <div className="subName">
                     {subName}
@@ -45,6 +45,7 @@ function Card(props) {
                     </form>
     
                 </div>
+                {banner !== "" ? <img src={banner} loading="lazy" alt=""/>: "" }
             </div>
     )
 }
