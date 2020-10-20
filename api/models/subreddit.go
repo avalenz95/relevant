@@ -49,6 +49,26 @@ func (subStore *SubRedditStore) GetAllSubRedditNames() []SubReddit {
 	return *subreddits
 }
 
+// GetAllSubRedditTrees in database
+func (subStore *SubRedditStore) GetAllSubRedditTrees() []*prefix.Tree {
+	var subTrees []*prefix.Tree
+
+	results, err := subStore.coll.Find(context.Background(), bson.D{})
+	if err != nil {
+		log.Error(err)
+	}
+
+	// Get all trees
+	for results.Next(context.Background()) {
+		var sub prefix.Tree
+		results.Decode(&sub)
+		subTrees = append(subTrees, &sub)
+	}
+
+	return subTrees
+}
+
+// CreateSubReddit in database
 func (subStore *SubRedditStore) CreateSubReddit(id string, name string, bannerUrl string) bool {
 	result := subStore.coll.FindOne(context.Background(), bson.M{"_id": id})
 	if result.Err() != mongo.ErrNoDocuments {
