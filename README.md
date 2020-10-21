@@ -11,8 +11,8 @@ Relevant is meant to be a google alerts esque application specifically designed 
 - [x] Add React frontend
 - [x] Add Redux
 - [x] Finished V1 of Subreddit Parsing Daemon (includes concurrent operation)
-- [ ] Convert API from MUX to ECHO
-- [ ] Add more routes to API
+- [x] Convert API from MUX to ECHO
+- [x] Add more routes to API
 - [ ] V2 of Subreddit Parsing
 - [ ] Add active user count
 - [ ] Add countdown till next subreddit parsing
