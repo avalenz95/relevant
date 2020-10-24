@@ -14,12 +14,12 @@ function Card(props) {
     // TODO: Figure out what's going on here.
     tags = Object.entries(keywords).map(([_, word],index) => {
         return (
-            <Tag word={word}/>
+            <Tag word={word} key={word}/>
         )
     })
 
     return (
-        <div className="card">
+        <div className="card" key={subName}>
                 <div className="container">
                     <div className="subName">
                     {subName}
@@ -28,22 +28,22 @@ function Card(props) {
                     <div className="tagGrid">
                         {tags}
                     </div>
+                    <div className="addWord">
+                        <form onSubmit={e => {
+                            e.preventDefault()
+                            dispatch(addKeywordToSub(subName, username, word))
+                            setWord("")
+                        }}>
     
-                    <form onSubmit={e => {
-                        e.preventDefault()
-                        dispatch(addKeywordToSub(subName, username, word))
-                        setWord("")
-                    }}>
-   
 
-                        <input 
-                            name="word" 
-                            value={word}
-                            onChange={e => setWord(e.target.value)}
-                        />
-                        <button name="submit" type="submit">Submit</button>
-                    </form>
-    
+                            <input 
+                                name="word" 
+                                value={word}
+                                onChange={e => setWord(e.target.value)}
+                            />
+                            <button name="submit" type="submit">Submit</button>
+                        </form>
+                    </div>
                 </div>
                 {banner !== "" ? <img src={banner} loading="lazy" alt=""/>: "" }
             </div>

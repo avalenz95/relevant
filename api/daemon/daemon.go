@@ -1,4 +1,4 @@
-package daemon
+package main
 
 import (
 	"encoding/json"
@@ -12,6 +12,7 @@ import (
 	"sync"
 
 	"github.com/ablades/prefix"
+	_ "github.com/ablades/relevant/config"
 	"github.com/ablades/relevant/db"
 	"github.com/ablades/relevant/models"
 	"github.com/spf13/viper"
@@ -92,10 +93,10 @@ func parseSubPosts(sub prefix.Tree, noteQueue chan models.Notification, waitGrou
 			if len(users) > 0 {
 				for _, user := range users {
 					fmt.Printf("\033[32m Added Notification to channel for \033[0m user: \033[34m %s \033[0m  with word: \033[35m %s \033[0m \n", user, word)
-					fmt.Printf("PermaLink: %s \n", post.Data.Permalink)
+					fmt.Printf("URL: %s \n", post.Data.URL)
 					noteQueue <- models.Notification{
 						Name:    user,
-						Message: fmt.Sprintf("Post \033[34m %s 033[0m contains word \033[35m %s \033[0m \n Comment: \033[37m %s \033[0m \n", post.Data.Permalink, word, post.Data.Selftext),
+						Message: fmt.Sprintf("Post \033[34m %s 033[0m contains word \033[35m %s \033[0m \n Comment: \033[37m %s \033[0m \n", post.Data.URL, word, post.Data.Selftext),
 					}
 				}
 			}
@@ -105,10 +106,10 @@ func parseSubPosts(sub prefix.Tree, noteQueue chan models.Notification, waitGrou
 }
 
 //Build Message from markdown template
-func toMarkdown(masterMap map[string][]string) {
+func toMarkdown(notifications map[string][]string) {
 	f, _ := os.Create("file.md")
 	t := template.Must(template.New("template.tmpl").ParseFiles("template.tmpl"))
-	for key, value := range masterMap {
+	for key, value := range notifications {
 		err := t.Execute(f, models.MessageNote{User: key, Content: value})
 		if err != nil {
 			panic(err)
@@ -117,7 +118,7 @@ func toMarkdown(masterMap map[string][]string) {
 }
 
 // Run Daemon
-func Run() {
+func main() {
 
 	//Connect to db
 	db := db.Connect()

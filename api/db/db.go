@@ -13,12 +13,13 @@ import (
 
 // Connect to a given database
 func Connect() *mongo.Database {
+
 	// Build URI
 	uri := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority",
-		viper.Get("db.user"),
-		viper.Get("db.password"),
-		viper.Get("db.cluster"),
-		viper.Get("db.name"),
+		viper.GetString("db.user"),
+		viper.GetString("db.password"),
+		viper.GetString("db.cluster"),
+		viper.GetString("db.name"),
 	)
 
 	// Close on failed connection

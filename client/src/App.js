@@ -5,7 +5,7 @@ import { createStore , applyMiddleware } from 'redux'
 import './App.css'
 import Dashboard from './components/Dashboard/Dashboard.js'
 import rootReducer from './reducers/index.js'
-
+import Nav from './components/Nav/Nav.js'
 
 const  ep = "http://localhost:8080"
 
@@ -17,6 +17,7 @@ function App() {
   return (
     <Provider store={store}>
       <div className="App">
+      <Nav endpoint={ep} />
         <Dashboard endpoint={ep}/>
       </div>
     </Provider>
