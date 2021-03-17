@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ablades/relevant/models"
+	"github.com/ablades/relevant/api/models"
 	"github.com/labstack/echo/v4"
 )
 

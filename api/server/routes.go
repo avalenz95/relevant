@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/ablades/relevant/handlers"
+	"github.com/ablades/relevant/api/handlers"
 	"github.com/labstack/echo/v4/middleware"
 )
 

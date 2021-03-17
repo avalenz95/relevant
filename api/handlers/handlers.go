@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/ablades/relevant/config"
+	"github.com/ablades/relevant/api/config"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/oauth2"

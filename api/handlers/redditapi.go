@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/ablades/relevant/models"
+	"github.com/ablades/relevant/api/models"
 	"github.com/labstack/gommon/log"
 	"github.com/spf13/viper"
 )

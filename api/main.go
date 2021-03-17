@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ablades/relevant/server"
+	"github.com/ablades/relevant/api/server"
 )
 
 func main() {
