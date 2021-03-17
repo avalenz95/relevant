@@ -25,7 +25,7 @@ func init() {
 	// Set the file name of the configurations file
 	viper.SetConfigName("config")
 	viper.SetConfigType("yml")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath("..")
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
