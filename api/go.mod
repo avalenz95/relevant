@@ -1,4 +1,4 @@
-module github.com/ablades/relevant
+module github.com/ablades/relevant/api
 
 go 1.14
 
