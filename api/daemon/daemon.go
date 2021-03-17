@@ -107,7 +107,7 @@ func parseSubPosts(sub prefix.Tree, noteQueue chan models.Notification, waitGrou
 //Build Message from markdown template
 func toMarkdown(masterMap map[string][]string) {
 	f, _ := os.Create("file.md")
-	t := template.Must(template.New("template.tmpl").ParseFiles("template.tmpl"))
+	t := template.Must(template.New("template.tmpl").ParseFiles("daemon/template.tmpl"))
 	for key, value := range masterMap {
 		err := t.Execute(f, models.MessageNote{User: key, Content: value})
 		if err != nil {
@@ -144,4 +144,6 @@ func Run() {
 
 	waitGroup.Wait()
 	close(noteQueue)
+
+	toMarkdown(noteMap)
 }
