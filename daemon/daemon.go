@@ -106,8 +106,8 @@ func parseSubPosts(sub prefix.Tree, noteQueue chan models.Notification, waitGrou
 
 //Build Message from markdown template
 func toMarkdown(masterMap map[string][]string) {
-	f, _ := os.Create("file.md")
-	t := template.Must(template.New("template.tmpl").ParseFiles("daemon/template.tmpl"))
+	f, _ := os.Create("output.md")
+	t := template.Must(template.New("template.tmpl").ParseFiles("./template.tmpl"))
 	for key, value := range masterMap {
 		err := t.Execute(f, models.MessageNote{User: key, Content: value})
 		if err != nil {
@@ -117,8 +117,16 @@ func toMarkdown(masterMap map[string][]string) {
 }
 
 // Run Daemon
-func Run() {
+func main() {
+	// Set the file name of the configurations file
+	viper.SetConfigName("config")
+	viper.SetConfigType("yml")
+	viper.AddConfigPath("..")
+	viper.AutomaticEnv()
 
+	if err := viper.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("Error reading config file, %s", err))
+	}
 	//Connect to db
 	db := db.Connect()
 	subStore := models.GetSubRedditStore(db)
