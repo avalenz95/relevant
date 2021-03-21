@@ -7,4 +7,5 @@
 .vs_code/*
 config.yml
 daemon/output.md
+app.yaml
 api/app.yaml

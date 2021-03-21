@@ -18,6 +18,7 @@ function App() {
     <Provider store={store}>
       <div className="App">
         <Dashboard endpoint={ep}/>
+        <div>{process.env.REACT_APP_ENDPOINT}</div>
       </div>
     </Provider>
   )

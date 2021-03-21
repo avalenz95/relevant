@@ -1,5 +1,11 @@
 runtime: go114
 
+env_variables:
+  MY_VAR: "my value"
+  REDDIT_APP: "uvZBBnlySNZUWg"
+  REDDIT_SECRET: "TH89zuORJ5asoOJx3nTtRo9MmTDiJg"
+  REDDIT_REDIRECT: "https://relevant-308317.uc.r.appspot.com/authcallback"
+
 handlers:
   - url: /.*
     script: auto
