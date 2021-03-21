@@ -7,7 +7,7 @@ import Dashboard from './components/Dashboard/Dashboard.js'
 import rootReducer from './reducers/index.js'
 
 
-const  ep = "http://localhost:8080"
+const  ep = process.env.REACT_APP_ENDPOINT
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 
