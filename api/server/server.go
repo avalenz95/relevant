@@ -6,7 +6,6 @@ import (
 	"github.com/ablades/relevant/api/db"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
-	"google.golang.org/appengine"
 )
 
 // Server represents components of a server
@@ -34,7 +33,6 @@ func (s *Server) Start(port string) {
 
 	// hook echo to default router
 	http.Handle("/", s.e)
-	appengine.Main()
 
 	s.e.Logger.Fatal(s.e.Start(port))
 }
