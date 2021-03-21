@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/ablades/relevant/api/config"
-	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/oauth2"
 )
@@ -31,7 +31,7 @@ func NewHandler(db *mongo.Database) *Handler {
 
 // RoundTrip Sets Headers
 func (h *Handler) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Add("User-Agent", viper.GetString("reddit.agent"))
+	req.Header.Add("User-Agent", os.Getenv("REDDIT_USER_AGENT"))
 	req.SetBasicAuth(h.config.ClientID, h.config.ClientSecret)
 
 	return h.T.RoundTrip(req)

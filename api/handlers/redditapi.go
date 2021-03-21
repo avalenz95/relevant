@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/ablades/relevant/api/models"
 	"github.com/labstack/gommon/log"
-	"github.com/spf13/viper"
 )
 
 // Reddit API handlers
@@ -20,7 +20,7 @@ func (h *Handler) getRequestBytes(endpoint string) []byte {
 		log.Error(err)
 	}
 
-	req.Header.Add("User-Agent", viper.GetString("reddit.agent"))
+	req.Header.Add("User-Agent", os.Getenv("REDDIT_USER_AGENT"))
 
 	resp, err := h.client.Do(req)
 	if err != nil {
