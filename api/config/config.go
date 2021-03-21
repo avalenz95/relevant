@@ -1,8 +1,10 @@
 package config
 
 import (
+	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 )
 
@@ -20,14 +22,10 @@ func GetAuthConfig() *oauth2.Config {
 	}
 }
 
-// func init() {
-// 	// Set the file name of the configurations file
-// 	viper.SetConfigName("config")
-// 	viper.SetConfigType("yml")
-// 	viper.AddConfigPath("..")
-// 	viper.AutomaticEnv()
+func LoadENV() {
+	err := godotenv.Load(".env")
 
-// 	if err := viper.ReadInConfig(); err != nil {
-// 		panic(fmt.Errorf("Error reading config file, %s", err))
-// 	}
-// }
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+}
