@@ -4,8 +4,7 @@ import Nav from '../Nav/Nav.js'
 import { loadUsername } from "../../actions/index.js"
 import { useDispatch } from 'react-redux'
 
-const  endpoint = "http://localhost:8000"
-
+const { ep } = props
 
 function Dashboard() {
     const dispatch = useDispatch() // Get the dispatcher
@@ -19,11 +18,11 @@ function Dashboard() {
         <div className="dashboard">
 
             <Nav
-                endpoint={endpoint} 
+                endpoint={ep} 
             />
                 
             <Grid
-                endpoint={endpoint}
+                endpoint={ep}
             />
         </div>
     )
