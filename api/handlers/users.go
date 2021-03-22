@@ -41,7 +41,7 @@ func (h *Handler) CreateUser(c echo.Context) (err error) {
 	c.SetCookie(&http.Cookie{
 		Name:  "username",
 		Value: userName,
-		Path:  "/",
+		Path:  os.Getenv("FE_URL"),
 	})
 	// create user
 	if user == nil {
@@ -59,8 +59,7 @@ func (h *Handler) CreateUser(c echo.Context) (err error) {
 		// Insert user into db
 		uStore.CreateUser(newUser)
 	}
-
-	return c.Redirect(http.StatusPermanentRedirect, os.Getenv("FE_URL")+"/user/"+userName)
+	return c.Redirect(http.StatusPermanentRedirect, os.Getenv("FE_URL")+"?user="+userName)
 }
 
 // DeleteUser and remove existing content

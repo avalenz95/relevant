@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-// SetRoutes will setup all the routes and
+// SetRoutes for backend
 func (s *Server) SetRoutes() {
 	s.e.Use(middleware.Logger())
 	s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{

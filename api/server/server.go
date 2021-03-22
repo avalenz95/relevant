@@ -34,7 +34,7 @@ func (s *Server) Start(port string) {
 	// register routes
 	s.SetRoutes()
 
-	s.e.Logger.Fatal(s.e.Start(port))
+	s.e.Logger.Fatal(s.e.Start(":" + port))
 }
 
 // Close stops the Server
