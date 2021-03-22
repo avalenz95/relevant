@@ -5,13 +5,15 @@ import { loadAuth } from '../../actions'
 
 
 //Navigation for website
-function Nav() {
+function Nav(props) {
+    const {endpoint} = props
+    
     const dispatch = useDispatch()
     // name of reducer (its where the state is stored)
     const name = useSelector(state => state.name)
     //Authentication request
     function onAuth () {
-        dispatch(loadAuth())
+        dispatch(loadAuth(endpoint))
     } 
     return (
         <nav className="navbar">

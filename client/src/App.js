@@ -7,7 +7,7 @@ import Dashboard from './components/Dashboard/Dashboard.js'
 import rootReducer from './reducers/index.js'
 
 
-const ep = process.env.REACT_APP_ENDPOINT
+const endpoint = process.env.REACT_APP_ENDPOINT
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 
@@ -17,7 +17,7 @@ function App() {
   return (
     <Provider store={store}>
       <div className="App">
-        <Dashboard endpoint={ep}/>
+        <Dashboard endpoint={endpoint}/>
         <div>{process.env.REACT_APP_ENDPOINT}</div>
       </div>
     </Provider>

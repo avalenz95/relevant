@@ -6,7 +6,7 @@ import Tag from '../Tag/Tag.js'
 
 // Displays a single subreddit along with associated keywords
 function Card(props) {
-    const { subName, username, keywords, banner } = props
+    const { endpoint, subName, username, keywords, banner } = props
     const [word, setWord] = useState("")
     const dispatch = useDispatch()
 
@@ -31,7 +31,7 @@ function Card(props) {
     
                     <form onSubmit={e => {
                         e.preventDefault()
-                        dispatch(addKeywordToSub(subName, username, word))
+                        dispatch(addKeywordToSub(endpoint, subName, username, word))
                         setWord("")
                     }}>
    

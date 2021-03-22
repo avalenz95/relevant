@@ -6,23 +6,23 @@ import { useDispatch } from 'react-redux'
 
 
 function Dashboard(props) {
-    const {ep} = props
+    const {endpoint} = props
     const dispatch = useDispatch() // Get the dispatcher
 
     // Attempt to load username on component mount
     useEffect(() => {
-        dispatch(loadUsername())
+        dispatch(loadUsername(endpoint))
     })
 
     return (
         <div className="dashboard">
 
             <Nav
-                endpoint={ep} 
+                endpoint={endpoint} 
             />
                 
             <Grid
-                endpoint={ep}
+                endpoint={endpoint}
             />
         </div>
     )

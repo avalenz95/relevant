@@ -5,7 +5,8 @@ import { useSelector } from 'react-redux'
 
 
 
-function Grid() {
+function Grid(props) {
+    const {endpoint} = props
     const name = useSelector(state => state.name)
     const userData = useSelector(state => state.userdata)
     const banners = useSelector(state => state.banners)
@@ -22,6 +23,7 @@ function Grid() {
             return (
                 //pass image as prop to card along with subreddits ect.
                 <Card 
+                    endpoint={endpoint}
                     key={index} 
                     username={name}
                     subName={subName} 

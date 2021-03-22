@@ -23,10 +23,10 @@ export const loadBannersError = (err) => {
     }
 }
 
-export const loadBanners = (username) => {
+export const loadBanners = (endpoint, username) => {
     return async(dispatch) => {
         // Build url
-        const url = "http://localhost:8000/banners/" + username
+        const url = endpoint + "/banners/" + username
         // Send a request
         try {
             const response = await fetch(url)
@@ -48,18 +48,18 @@ export const ADD_KEYWORD = 'ADD_KEYWORD'
 export const KEYWORD_SUCCESS = 'KEYWORD_SUCCESS'
 export const KEYWORD_ERROR = 'KEYWORD_ERROR'
 
-export const addKeywordToSub = (subreddit, username, keyword) => {
+export const addKeywordToSub = (endpoint, subreddit, username, keyword) => {
     return async(dispatch) => {
 
         // Build url
-        const url = `http://localhost:8000/user/${username}/${subreddit}/${keyword}`
+        const url = endpoint + `/user/${username}/${subreddit}/${keyword}`
 
         try {
             // Send a post request
             const response = await fetch(url)
 
             await dispatch(keywordSuccess(response.status))
-            await dispatch(loadUserData(username))
+            await dispatch(loadUserData(endpoint, username))
 
         } catch(err) {
             dispatch(keywordError(err))
@@ -97,14 +97,14 @@ export const usernameError = (err) => {
 }
 
 // Get the current user from cookies
-export const loadUsername = () => {
+export const loadUsername = (endpoint) => {
     return async(dispatch) => {
         const username = Cookies.get("username")
         // Send actions to dispatcher
         if(username){
             await dispatch(usernameSuccess(username))
-            await dispatch(loadUserData(username))
-            await dispatch(loadBanners(username))
+            await dispatch(loadUserData(endpoint, username))
+            await dispatch(loadBanners(endpoint, username))
         } else {
             dispatch(usernameError())
         }
@@ -127,10 +127,10 @@ export const userDataError = (err) => {
 
 //CONSIDER DOING ALL OF THE PARSING FOR SUBREDDITS HERE AND RETURNING THE ARRAY OF COMPONT
 // Thunk - similar to a call back, function that wraps another function(action)
-export const loadUserData = (username) => {
+export const loadUserData = (endpoint, username) => {
     return async(dispatch) => {
         // Build url
-        const url = "http://localhost:8000/user/" + username
+        const url = endpoint + "/user/" + username
         // Send a request
         try {
             const response = await fetch(url)
@@ -138,7 +138,7 @@ export const loadUserData = (username) => {
             console.log(json)
             // Send to dispatcher
             dispatch(userDataSuccess(json))
-            await dispatch(loadBanners(username))
+            await dispatch(loadBanners(endpoint, username))
         } catch(err) {
             dispatch(userDataError(err))
         }
@@ -165,11 +165,11 @@ export const authError = (err) => {
     }
 }
 
-export const loadAuth = () => {
+export const loadAuth = (endpoint) => {
     return async(dispatch) => {
         // Build url
         console.log("here")
-        const url = "http://localhost:8000/auth"
+        const url = endpoint + "/auth"
         // Send a request
         try {
             const response = await fetch(url, {
