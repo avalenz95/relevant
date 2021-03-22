@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -10,6 +11,10 @@ import (
 
 // GetAuthConfig for app
 func GetAuthConfig() *oauth2.Config {
+	fmt.Print(os.Getenv("REDDIT_APP"),
+		os.Getenv("REDDIT_SECRET"),
+	)
+
 	return &oauth2.Config{
 		ClientID:     os.Getenv("REDDIT_APP"),
 		ClientSecret: os.Getenv("REDDIT_SECRET"),

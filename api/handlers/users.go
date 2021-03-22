@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/ablades/relevant/api/models"
 	"github.com/labstack/echo/v4"
@@ -59,7 +60,7 @@ func (h *Handler) CreateUser(c echo.Context) (err error) {
 		uStore.CreateUser(newUser)
 	}
 
-	return c.Redirect(http.StatusPermanentRedirect, "http://localhost:3000/user/"+userName)
+	return c.Redirect(http.StatusPermanentRedirect, os.Getenv("FE_URL")+"/user/"+userName)
 }
 
 // DeleteUser and remove existing content
