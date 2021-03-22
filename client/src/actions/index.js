@@ -68,9 +68,10 @@ export const addKeywordToSub = (endpoint, subreddit, username, keyword) => {
 }
 
 // Retrieving username was successful
-export const keywordSuccess = () => {
+export const keywordSuccess = (success) => {
     return {
         type: KEYWORD_SUCCESS,
+        payload: {success}
     }
 }
 // Retrieving username was unsuccessful
@@ -99,6 +100,14 @@ export const usernameError = (err) => {
 // Get the current user from cookies
 export const loadUsername = (endpoint) => {
     return async(dispatch) => {
+
+        let search = window.location.search;
+        let params = new URLSearchParams(search);
+        let user = params.get('user');
+        if (user) {
+            Cookies.set(username, user)
+        }
+        
         const username = Cookies.get("username")
         // Send actions to dispatcher
         if(username){
