@@ -28,11 +28,11 @@ func NewServer(database *mongo.Database) *Server {
 
 // Start the server
 func (s *Server) Start(port string) {
-	// register routes
-	s.SetRoutes()
-
 	// hook echo to default router
 	http.Handle("/", s.e)
+
+	// register routes
+	s.SetRoutes()
 
 	s.e.Logger.Fatal(s.e.Start(port))
 }
