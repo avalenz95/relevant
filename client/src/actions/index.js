@@ -105,9 +105,9 @@ export const loadUsername = (endpoint) => {
         let params = new URLSearchParams(search);
         let user = params.get('user');
         if (user) {
-            Cookies.set(username, user)
+            Cookies.set("username", user)
         }
-        
+
         const username = Cookies.get("username")
         // Send actions to dispatcher
         if(username){
