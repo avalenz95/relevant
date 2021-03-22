@@ -4,9 +4,9 @@ import Nav from '../Nav/Nav.js'
 import { loadUsername } from "../../actions/index.js"
 import { useDispatch } from 'react-redux'
 
-const { ep } = props
 
-function Dashboard() {
+function Dashboard(props) {
+    const {ep} = props
     const dispatch = useDispatch() // Get the dispatcher
 
     // Attempt to load username on component mount
