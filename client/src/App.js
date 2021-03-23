@@ -6,7 +6,6 @@ import './App.css'
 import Dashboard from './components/Dashboard/Dashboard.js'
 import rootReducer from './reducers/index.js'
 
-
 const endpoint = process.env.REACT_APP_ENDPOINT
 
 const store = createStore(rootReducer, applyMiddleware(thunk))

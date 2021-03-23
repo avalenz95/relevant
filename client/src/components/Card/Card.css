@@ -29,24 +29,78 @@
   }
   
   .container {
-    padding: 2px 16px;
+    padding: 2px 5px;
     position: relative;
+    width: 95%;
+    height: 100%; 
     z-index: 1;
   }
 
 
   .tagGrid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    justify-items: center;
+    
+    /* grid-template-columns: repeat(4, 1fr); */
+    /* grid-template-rows: repeat(2, 1fr); */
+
+    /* auto auto is telling the browser to render two rows, if needed */
+    background-color: transparent;
+    grid-template-rows: auto auto;
+    grid-auto-flow: column;
+    overflow-x: auto;
+    justify-items: start;
+    
+    /* Hide scrollbar for IE, Edge and Firefox */
+    /* -ms-overflow-style: none;  IE and Edge */
+    /* scrollbar-width: none;  Firefox */
   }
+
+
 
   .subName {
     display: flex;
     justify-self: flex-start;
     text-shadow: 2px 2px orangered;
     color: whitesmoke;
-    font-size: 40px;
+    font-size: 35px;
     font-weight: bolder;
+    padding-bottom: 4px;
+  }
+
+
+  .addWord {
+    /* display: flex; */
+    position: absolute;
+    font-weight: bolder;
+    right: 0;
+  }
+
+  input[type=search] {
+    width: 45px;
+    background-color: rgb(0, 182, 0);
+    border: none;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: white;
+    opacity: 1; /* Firefox */
+  }
+
+  :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: white;
+    text-align: center;
+  }
+
+  ::-ms-input-placeholder {
+    color: white;
+    text-align: center;
+  }
+
+  input[type=search]:focus {
+    width: 100%;
+    background-color: white;
   }

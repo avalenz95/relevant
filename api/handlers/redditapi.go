@@ -62,7 +62,7 @@ func (h *Handler) getRedditUserSubs() map[string]string {
 	}{}
 
 	firstRequest := true
-	for subredditJSON.Data.After == "" {
+	for {
 
 		var content []byte
 		// Initial content has not been set
@@ -83,7 +83,9 @@ func (h *Handler) getRedditUserSubs() map[string]string {
 			subStore.CreateSubReddit(item.Data.ID, item.Data.DisplayName, item.Data.BannerImg)
 		}
 
-		fmt.Println("here")
+		if subredditJSON.Data.After == "" {
+			break
+		}
 	}
 
 	return subredditsMap

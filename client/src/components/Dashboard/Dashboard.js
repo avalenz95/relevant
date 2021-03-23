@@ -15,12 +15,12 @@ function Dashboard(props) {
     })
 
     return (
+        
         <div className="dashboard">
-
-            <Nav
+             <Nav
                 endpoint={endpoint} 
             />
-                
+
             <Grid
                 endpoint={endpoint}
             />
