@@ -5,7 +5,6 @@ import { createStore , applyMiddleware } from 'redux'
 import './App.css'
 import Dashboard from './components/Dashboard/Dashboard.js'
 import rootReducer from './reducers/index.js'
-import Nav from './components/Nav/Nav.js'
 
 const endpoint = process.env.REACT_APP_ENDPOINT
 
