@@ -3,13 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"sync"
+	"text/template"
 
 	"github.com/ablades/prefix"
 	"github.com/ablades/relevant/api/db"
@@ -99,7 +99,7 @@ func parseSubPosts(sub prefix.Tree, noteQueue chan Notification, waitGroup *sync
 						PostTitle: post.Data.Title,
 						Post:      post.Data.Selftext,
 						Keyword:   word,
-						Link:      post.Data.Selftext,
+						Link:      post.Data.URL,
 						// Timestamp: post.Data.CreatedUtc
 						// post.Data.
 					}

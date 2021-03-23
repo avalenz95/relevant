@@ -3,10 +3,11 @@
 {{ range $sub, $posts := .}}
     ## {{$sub}}
     {{ range $posts := .}}
-        > {{.Keyword}}
-        > {{.PostTitle}}
-        > {{.Post}}
-        > {{.Link}}
+        **Keyword: {{.Keyword}}**
+        **Post Title: {{.PostTitle}}**  {{.Link}}
+        
+        {{.Post}} 
+    ---
     {{end}}
     ---
 {{end}}
