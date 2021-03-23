@@ -14,6 +14,7 @@ import (
 
 // Connect to a given database
 func Connect() *mongo.Database {
+
 	// Build URI
 	uri := fmt.Sprintf("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority",
 		os.Getenv("DB_USER"),

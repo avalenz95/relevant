@@ -1,6 +1,5 @@
 import React, { useEffect } from "react"
 import Grid from '../Grid/Grid.js'
-import Nav from '../Nav/Nav.js'
 import { loadUsername } from "../../actions/index.js"
 import { useDispatch } from 'react-redux'
 
@@ -15,11 +14,8 @@ function Dashboard(props) {
     })
 
     return (
+        
         <div className="dashboard">
-
-            <Nav
-                endpoint={endpoint} 
-            />
                 
             <Grid
                 endpoint={endpoint}
