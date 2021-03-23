@@ -38,11 +38,13 @@ function Card(props) {
    
 
                             <input 
+                                type="search"
                                 name="word" 
                                 value={word}
+                                placeholder="add"
                                 onChange={e => setWord(e.target.value)}
                             />
-                            <button name="submit" type="submit">Submit</button>
+                            {/* <input name="submit" type="submit" placeholder='Submit'/> */}
                         </form>
                     </div>
                 </div>
