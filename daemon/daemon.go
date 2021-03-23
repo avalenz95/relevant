@@ -111,11 +111,15 @@ func parseSubPosts(sub prefix.Tree, noteQueue chan Notification, waitGroup *sync
 }
 
 //Build Message from markdown template
-func toMarkdown(masterMap map[string][]string) {
-	f, _ := os.Create("output.md")
+func toMarkdown(masterMap map[string]map[string][]Notification) {
+	// Create Template
 	t := template.Must(template.New("template.tmpl").ParseFiles("./template.tmpl"))
-	for key, value := range masterMap {
-		err := t.Execute(f, MessageNote{User: key, Content: value})
+	// Iter over users
+	for user, subMap := range masterMap {
+		// Create File for a user
+		f, _ := os.Create(user + "output.md")
+		// Execute template on map
+		err := t.Execute(f, subMap)
 		if err != nil {
 			panic(err)
 		}
