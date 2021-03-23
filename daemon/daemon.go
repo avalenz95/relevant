@@ -17,7 +17,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func parseSubPosts(sub prefix.Tree, noteQueue chan models.Notification, waitGroup *sync.WaitGroup) {
+func parseSubPosts(sub prefix.Tree, noteQueue chan Notification, waitGroup *sync.WaitGroup) {
 	defer waitGroup.Done()
 	defer fmt.Printf("\033[32m Done parsing: \033[35m %s! \033[0m \n", sub.Name)
 
@@ -93,9 +93,15 @@ func parseSubPosts(sub prefix.Tree, noteQueue chan models.Notification, waitGrou
 				for _, user := range users {
 					fmt.Printf("\033[32m Added Notification to channel for \033[0m user: \033[34m %s \033[0m  with word: \033[35m %s \033[0m \n", user, word)
 					fmt.Printf("PermaLink: %s \n", post.Data.Permalink)
-					noteQueue <- models.Notification{
-						Name:    user,
-						Message: fmt.Sprintf("Post \033[34m %s 033[0m contains word \033[35m %s \033[0m \n Comment: \033[37m %s \033[0m \n", post.Data.Permalink, word, post.Data.Selftext),
+					noteQueue <- Notification{
+						Subreddit: post.Data.Subreddit,
+						UserName:  user,
+						PostTitle: post.Data.Title,
+						Post:      post.Data.Selftext,
+						Keyword:   word,
+						Link:      post.Data.Selftext,
+						// Timestamp: post.Data.CreatedUtc
+						// post.Data.
 					}
 				}
 			}
@@ -109,7 +115,7 @@ func toMarkdown(masterMap map[string][]string) {
 	f, _ := os.Create("output.md")
 	t := template.Must(template.New("template.tmpl").ParseFiles("./template.tmpl"))
 	for key, value := range masterMap {
-		err := t.Execute(f, models.MessageNote{User: key, Content: value})
+		err := t.Execute(f, MessageNote{User: key, Content: value})
 		if err != nil {
 			panic(err)
 		}
@@ -133,9 +139,9 @@ func main() {
 	subreddits := subStore.GetAllSubReddits()
 
 	var waitGroup sync.WaitGroup
-	//Map Notifications to users
-	noteMap := make(map[string][]string)
-	noteQueue := make(chan models.Notification)
+	//Note Map  - Notification Map  map[user] -> map[subreddit][posts]
+	noteMap := make(map[string]map[string][]Notification)
+	noteQueue := make(chan Notification)
 
 	for _, sub := range subreddits {
 		fmt.Printf("\033[33m Init worker \033[0m for : \033[96m %s \033[0m \n", sub.Name)
@@ -146,7 +152,14 @@ func main() {
 	//Read from channel until it's closed
 	go func() {
 		for note := range noteQueue {
-			noteMap[note.Name] = append(noteMap[note.Name], note.Message)
+
+			//Check for nested map create if doesn't exist
+			subMap, ok := noteMap[note.UserName]
+			if !ok {
+				subMap = make(map[string][]Notification)
+				noteMap[note.UserName] = subMap
+			}
+			subMap[note.Subreddit] = append(subMap[note.Subreddit], note)
 		}
 	}()
 
